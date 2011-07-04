@@ -1,0 +1,7 @@
+debug/
+release/
+Makefile*
+.cproject
+.project
+ui_*.h
+srutils
