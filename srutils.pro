@@ -1,5 +1,6 @@
 TEMPLATE = app
-TARGET = srutils
+CONFIG(debug, debug|release):TARGET = srutils-debug
+else:TARGET = srutils
 QT += core \
     gui \
     xml

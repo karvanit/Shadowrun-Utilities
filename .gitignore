@@ -5,3 +5,5 @@ Makefile*
 .project
 ui_*.h
 srutils
+srutils-debug
+.settings/
