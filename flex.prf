@@ -1,0 +1,10 @@
+flex.name = flex
+flex.commands = \
+	flex -P${QMAKE_FILE_BASE} ${QMAKE_FILE_IN} $$escape_expand(\\n\\t) \
+	$$QMAKE_DEL_FILE ${QMAKE_FILE_BASE}.lex$${first(QMAKE_EXT_CPP)} $$escape_expand(\\n\\t) \
+	$$QMAKE_MOVE lex.${QMAKE_FILE_BASE}.c ${QMAKE_FILE_BASE}.lex$${first(QMAKE_EXT_CPP)}
+flex.input = FLEXSOURCES
+flex.output = ${QMAKE_FILE_BASE}.lex$${first(QMAKE_EXT_CPP)}
+flex.variable_out = GENERATED_SOURCES
+flex.depends = ${QMAKE_FILE_BASE}.tab.hpp
+QMAKE_EXTRA_COMPILERS += flex

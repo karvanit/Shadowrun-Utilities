@@ -12,3 +12,7 @@ SOURCES += rollbar.cpp \
 FORMS += rollbar.ui \
     srutils.ui
 RESOURCES += 
+FLEXSOURCES +=
+BISONSOURCES +=
+include(bison.prf)
+include(flex.prf)

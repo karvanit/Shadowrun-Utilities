@@ -9,3 +9,8 @@ srutils-debug
 .settings/
 srcdoc/
 doxygen.log
+roller.tab.*
+roller.lex.*
+location.hh
+position.hh
+stack.hh

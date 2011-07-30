@@ -1,0 +1,15 @@
+bison.name = bison
+bison.commands = bison -d ${QMAKE_FILE_IN}
+bison.input = BISONSOURCES
+bison.output = ${QMAKE_FILE_BASE}.tab.cpp
+bison.variable_out = SOURCES
+QMAKE_EXTRA_COMPILERS += bison
+
+bisonheader.commands = @true
+bisonheader.input = BISONSOURCES
+bisonheader.output = ${QMAKE_FILE_BASE}.tab.hpp
+bisonheader.variable_out = HEADERS
+bisonheader.depends = ${QMAKE_FILE_BASE}.tab.cpp
+QMAKE_EXTRA_COMPILERS += bisonheader
+HEADERS += stack.hh location.hh position.hh
+QMAKE_DISTCLEAN += stack.hh location.hh position.hh
