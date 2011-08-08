@@ -4,8 +4,11 @@ else:TARGET = srutils
 QT += core \
     gui \
     xml
-HEADERS += srutils.h
-SOURCES += main.cpp \
+HEADERS += rollbar.h \
+    srutils.h
+SOURCES += rollbar.cpp \
+    main.cpp \
     srutils.cpp
-FORMS += srutils.ui
+FORMS += rollbar.ui \
+    srutils.ui
 RESOURCES += 
