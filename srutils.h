@@ -4,16 +4,15 @@
 #include <QtGui/QMainWindow>
 #include "ui_srutils.h"
 
-class SRUtils : public QMainWindow
-{
-    Q_OBJECT
+class SRUtils : public QMainWindow {
+	Q_OBJECT
 
 public:
-    SRUtils(QWidget *parent = 0);
-    ~SRUtils();
+	SRUtils(QWidget *parent = 0);
+	~SRUtils();
 
 private:
-    Ui::SRUtilsClass ui;
+	Ui::SRUtilsClass ui;
 };
 
 #endif // SRUTILS_H

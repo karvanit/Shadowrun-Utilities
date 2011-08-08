@@ -1,7 +1,7 @@
 #include "srutils.h"
 
 SRUtils::SRUtils(QWidget *parent)
-    : QMainWindow(parent)
+  : QMainWindow(parent)
 {
 	ui.setupUi(this);
 }
