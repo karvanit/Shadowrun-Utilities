@@ -7,3 +7,5 @@ ui_*.h
 srutils
 srutils-debug
 .settings/
+srcdoc/
+doxygen.log
