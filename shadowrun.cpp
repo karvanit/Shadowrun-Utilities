@@ -84,6 +84,7 @@ SimpleTestResult DicePool::roll(int threshold) const
 {
 	if (count <= 0)
 		return SimpleTestResult::create(-1, NO_GLITCH);
+	threshold = std::max(0, threshold);
 	int dice = count;
 	int hits = 0;
 	int bads = 0;
@@ -110,8 +111,11 @@ SimpleTestResult DicePool::roll(int threshold) const
 
 ExtendedTestResult DicePool::extendedRoll(int threshold, bool limited) const
 {
+	if (count <= 0)
+		return ExtendedTestResult::create(0, NO_GLITCH);
 	int hits = 0;
 	int tries = 0;
+	threshold = std::max(2, threshold);
 	if (!limited) {
 		do {
 			++tries;
