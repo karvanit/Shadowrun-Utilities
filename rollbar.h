@@ -35,6 +35,8 @@ protected:
 private:
 	void historyPrev();
 	void historyNext();
+	void addHistory(const QString &entry);
+	void restoreHistory();
 
 private slots:
 	void on_roller_editingFinished();
@@ -43,8 +45,11 @@ private:
 	QStringList history;
 	int history_position;
 	QStringList results;
+	bool stored_current;
 	Ui::RollBar ui;
 static QPalette *error_colours;
+static const int MAX_HISTORY_ENTRIES = 100;
+static const int MAX_RESULT_ENTRIES = 10;
 };
 
 #endif // ROLLBAR_H

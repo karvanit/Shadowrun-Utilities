@@ -25,7 +25,7 @@ using namespace Shadowrun;
 QPalette *RollBar::error_colours(0);
 
 RollBar::RollBar(QWidget *parent)
-  : QWidget(parent), history(), history_position(-1), results()
+  : QWidget(parent), history(), history_position(-1), results(), stored_current()
 {
 	if (!error_colours) {
 		error_colours = new QPalette(QApplication::palette());
@@ -43,44 +43,22 @@ RollBar::~RollBar()
 /** Handle the line input.
  *  This will calculate the result and prepend it in the results label.
  *  It will also add the line in the history, if it's different from the previous one.
- *  FIXME: This is a mess, it should be possible to make the flow cleaner.
- *  XXX: When the new text is the same as the previous entry, we should not add it to the history again, and in fact not change the history at all.
  */
 void
 RollBar::on_roller_editingFinished()
 {
 	QString val = ui.roller->text();
 	if (val.isEmpty()) {
-		history_position = -1;
+		restoreHistory();
 		return;
 	}
 	RollInfo result;
 	if (!parseAndRoll(val, result)) {
-		//Make sure the bad line is not part of our history, but that it remains in the editline.
-		//Also, change the background of the display area, to signal an error.
-		//XXX: Are we actually doing what we promised to the history?
-		if (history_position != -1) {
-			if (history.at(history.size() - 2) != val) {
-				history.removeLast();
-			}
-		}
+		restoreHistory();
 		ui.roller->setPalette(*error_colours);
 	} else {
-		//Make sure the line becomes part of our history and clear the editline.
-		//And place the result message in the message log.
-		//XXX: Are we actually doing what we promised to the history?
-		if (history_position != -1) {
-			if (history.at(history.size() - 2) != val) {
-				history[history.size() - 1] = val;
-			} else {
-				history.removeLast();
-			}
-		} else {
-			history.append(val);
-		}
-		if (history.size() > 100)
-			history.removeFirst();
-		if (results.size() > 9)
+		addHistory(val);
+		if (results.size() == MAX_RESULT_ENTRIES)
 			results.removeLast();
 		/* Now decode the result from the roll. */
 		QString res("Not implemented yet");
@@ -110,7 +88,6 @@ RollBar::on_roller_editingFinished()
 		ui.roller->setText("");
 		ui.roller->setPalette(QApplication::palette());
 	}
-	history_position = -1;	//Reset history walk
 }
 
 void
@@ -132,20 +109,21 @@ RollBar::keyPressEvent(QKeyEvent *event)
 }
 
 /** Show the previous history entry.
- *  The first time this is called for each entry it will also store the partial
- *  entry at the end of the history.
+ *  The first time this is called we also store the current text.
  */
 void
 RollBar::historyPrev()
 {
 	int prev_pos = history_position;
-	if (!history.isEmpty() && history_position == -1) {
-		if (ui.roller->text() != history.last()) {
-			history.append(ui.roller->text());
-			history_position = history.size() - 2;
-		} else {
-			history_position = history.size() - 1;
+	if (history_position == -1) {
+		QString cur = ui.roller->text();
+		if (history.isEmpty() || cur != history.last()) {
+			history.append(cur);
+			stored_current = true;
+		} else {	//Skip if same as last history entry
+			stored_current = false;
 		}
+		history_position = history.size() - 2;
 	} else if (history_position > 0)
 		--history_position;
 	if (history_position != prev_pos)
@@ -153,14 +131,46 @@ RollBar::historyPrev()
 }
 
 /** Show the next history entry.
- *  The line been edited when history view started is always the last entry in history.
+ * Once we have no more history, display the current text, if we have any.
  */
 void
 RollBar::historyNext()
 {
-	int prev_pos = history_position;
-	if (history_position < history.size() -1)
+	if (history_position < history.size() -1) {
 		++history_position;
-	if (history_position != prev_pos)
 		ui.roller->setText(history[history_position]);
+	}
+}
+
+/** Restore the history to normal values.
+ *  Remove any extra value added temporary for the history walk.
+ */
+void
+RollBar::restoreHistory()
+{
+	if (stored_current) {
+		history.removeLast();
+		stored_current = false;
+	}
+	history_position = -1;
+}
+
+/** Append a history entry.
+ *  We only add the value if it's not already the last entry in the history list.
+ *  \param entry The entry to append to our history list.
+ */
+void
+RollBar::addHistory(const QString &entry)
+{
+	if (stored_current) {
+		if (entry != history.at(history.size() - 2)) {
+			history[history.size() - 1] = entry;
+		} else {
+			history.removeLast();
+		}
+		stored_current = false;
+	} else if (history.isEmpty() || entry != history.last()) {
+		history.append(entry);
+	}
+	history_position = -1;
 }
