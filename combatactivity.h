@@ -1,0 +1,36 @@
+/*
+ * Copyright © 2011 Konstantinos Arvanitis <konstantinos.arvanitis@gmail.com>
+ *
+ * This file is part of Shadowrun Utilities.
+ *
+ * Shadowrun Utilities program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef COMBATACTIVITY_H_
+#define COMBATACTIVITY_H_
+
+#include <QStackedWidget>
+
+/** Handle initiative for Shadowrun combats.
+ *  This class keeps track of the initiative score of actors in a combat and
+ *  the amount of passes that are allowed. It also displays a sorted list
+ *  in combat order.
+ */
+class CombatActivity: public QStackedWidget {
+public:
+	CombatActivity(QWidget *parent = 0);
+	~CombatActivity();
+};
+
+#endif /* COMBATACTIVITY_H_ */

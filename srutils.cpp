@@ -17,6 +17,8 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "srutils.h"
+#include "mainview.h"
+#include "combatactivity.h"
 
 SRUtils::SRUtils(QWidget *parent)
   : QMainWindow(parent)
@@ -27,4 +29,9 @@ SRUtils::SRUtils(QWidget *parent)
 SRUtils::~SRUtils()
 {
 
+}
+
+void SRUtils::on_action_Combat_triggered()
+{
+	ui.centralwidget->setActivity(new CombatActivity);
 }

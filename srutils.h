@@ -29,6 +29,9 @@ public:
 	SRUtils(QWidget *parent = 0);
 	~SRUtils();
 
+private slots:
+	void on_action_Combat_triggered();
+
 private:
 	Ui::SRUtilsClass ui;
 };
