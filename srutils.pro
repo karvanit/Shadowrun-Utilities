@@ -4,15 +4,18 @@ else:TARGET = srutils
 QT += core \
     gui \
     xml
-HEADERS += rollbar.h \
+HEADERS += rollinfo.h \
+    shadowrun.h \
+    rollbar.h \
     srutils.h
-SOURCES += rollbar.cpp \
+SOURCES += shadowrun.cpp \
+    rollbar.cpp \
     main.cpp \
     srutils.cpp
 FORMS += rollbar.ui \
     srutils.ui
 RESOURCES += 
-FLEXSOURCES +=
-BISONSOURCES +=
+FLEXSOURCES += roller.l
+BISONSOURCES += roller.ypp
 include(bison.prf)
 include(flex.prf)

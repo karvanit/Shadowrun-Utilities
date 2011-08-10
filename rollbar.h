@@ -44,6 +44,7 @@ private:
 	int history_position;
 	QStringList results;
 	Ui::RollBar ui;
+static QPalette *error_colours;
 };
 
 #endif // ROLLBAR_H

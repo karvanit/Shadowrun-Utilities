@@ -17,11 +17,20 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "rollbar.h"
+#include "rollinfo.h"
 #include <QKeyEvent>
+using namespace Roller;
+using namespace Shadowrun;
+
+QPalette *RollBar::error_colours(0);
 
 RollBar::RollBar(QWidget *parent)
   : QWidget(parent), history(), history_position(-1), results()
 {
+	if (!error_colours) {
+		error_colours = new QPalette(QApplication::palette());
+		error_colours->setBrush(QPalette::Base, error_colours->alternateBase());
+	}
 	ui.setupUi(this);
 	ui.results->setMaximumHeight(ui.results->fontMetrics().height() * 6);
 }
@@ -34,13 +43,33 @@ RollBar::~RollBar()
 /** Handle the line input.
  *  This will calculate the result and prepend it in the results label.
  *  It will also add the line in the history, if it's different from the previous one.
+ *  FIXME: This is a mess, it should be possible to make the flow cleaner.
+ *  XXX: When the new text is the same as the previous entry, we should not add it to the history again, and in fact not change the history at all.
  */
 void
 RollBar::on_roller_editingFinished()
 {
 	QString val = ui.roller->text();
-	if (!val.isEmpty()) {
-		if (history_position != -1) {	//XXX: This places an extra empty line if the line matches the previous line's text.
+	if (val.isEmpty()) {
+		history_position = -1;
+		return;
+	}
+	RollInfo result;
+	if (!parseAndRoll(val, result)) {
+		//Make sure the bad line is not part of our history, but that it remains in the editline.
+		//Also, change the background of the display area, to signal an error.
+		//XXX: Are we actually doing what we promised to the history?
+		if (history_position != -1) {
+			if (history.at(history.size() - 2) != val) {
+				history.removeLast();
+			}
+		}
+		ui.roller->setPalette(*error_colours);
+	} else {
+		//Make sure the line becomes part of our history and clear the editline.
+		//And place the result message in the message log.
+		//XXX: Are we actually doing what we promised to the history?
+		if (history_position != -1) {
 			if (history.at(history.size() - 2) != val) {
 				history[history.size() - 1] = val;
 			} else {
@@ -51,15 +80,37 @@ RollBar::on_roller_editingFinished()
 		}
 		if (history.size() > 100)
 			history.removeFirst();
-		history_position = -1;	//Reset history walk
-		// TODO: Instead of echoing the line, calculate the results!
 		if (results.size() > 9)
 			results.removeLast();
-		results.prepend(val);
+		/* Now decode the result from the roll. */
+		QString res("Not implemented yet");
+		switch (result.roll) {
+		case RollInfo::SR_SIMPLE:
+			if (result.simple.glitch == CRITICAL_GLITCH) {
+				res = tr("Critical glitch!");
+			} else if (result.simple.hits == -1) {
+				res = result.simple.glitch == GLITCH ? tr("Failed with a glitch!") : tr("Failed");
+			} else if (result.simple.hits == 0) {
+				res = result.simple.glitch == GLITCH ? tr("Success with a glitch!") : tr("Bare Success");
+			} else if (result.simple.glitch == GLITCH) {
+				res = tr("%1 net hits and a glitch!").arg(result.simple.hits);
+			} else {
+				res = tr("%1 net hits").arg(result.simple.hits);
+			}
+			break;
+		case RollInfo::SR_EXTENDED:
+			//XXX: Write this
+			break;
+		case RollInfo::SR_OPPOSED:
+			//XXX: Write this
+			break;
+		}
+		results.prepend(res);
 		ui.results->setPlainText(results.join("\n"));
 		ui.roller->setText("");
-		return;
+		ui.roller->setPalette(QApplication::palette());
 	}
+	history_position = -1;	//Reset history walk
 }
 
 void
