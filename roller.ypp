@@ -28,7 +28,7 @@ using namespace Shadowrun;
 	int num;
 	DicePool *pool;
 }
-%token END INVALID RUSHED OPPOSED LIMITED OPEN CLOSE INTERVAL
+%token END RUSHED OPPOSED LIMITED OPEN CLOSE INTERVAL INVALID
 %left EDGE
 %right LIMIT
 %token <num> NUMBER
@@ -43,7 +43,7 @@ using namespace Shadowrun;
 Roller::Parser::token_type rollerlex(Roller::Parser::semantic_type *yyval);
 #define yylex rollerlex
 %}
-
+%destructor { delete $$; } <pool>
 %%
 %start line;
 
@@ -85,8 +85,7 @@ opposed_roll: dice_pool OPPOSED dice_pool
 		}
 	;
 
-options: 			{ $$ = 0; }
-	| LIMITED		{ $$ = 1; }
+options: LIMITED		{ $$ = 1; }
 	| RUSHED		{ $$ = 2; }
 	| LIMITED RUSHED	{ $$ = 3; }
 	| RUSHED LIMITED	{ $$ = 3; }
@@ -97,6 +96,12 @@ extended_roll: options ext_dice_pool OPEN expr INTERVAL NUMBER CLOSE
 			state.roll = RollInfo::SR_EXTENDED;
 			state.extended = $2->extendedRoll($4, $1 & 1);
 			delete $2;
+		}
+	|	dice_pool OPEN expr INTERVAL NUMBER CLOSE
+		{
+			state.roll = RollInfo::SR_EXTENDED;
+			state.extended = $1->extendedRoll($3);
+			delete $1;
 		}
 	;
 

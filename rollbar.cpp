@@ -77,7 +77,19 @@ RollBar::on_roller_editingFinished()
 			}
 			break;
 		case RollInfo::SR_EXTENDED:
-			//XXX: Write this
+			if (result.extended.intervals < 0) {
+				//We never fail with simple glitch.
+				if (result.extended.glitch == NO_GLITCH) {
+					res = tr("Failed after %1 intervals").arg(-result.extended.intervals);
+				} else {
+					res = tr("Failed after %1 intervals, with critical glitch!").arg(-result.extended.intervals);
+				}
+			} else if (result.extended.intervals > 0) {
+				//We never have glitch if we succeed.
+				res = tr("Success after %1 intervals").arg(result.extended.intervals);
+			} else /* No intervals == not enough dice to try */ {
+				res = tr("Not even started!");
+			}
 			break;
 		case RollInfo::SR_OPPOSED:
 			if (result.opposed.hits < 0) {
