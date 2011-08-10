@@ -80,7 +80,35 @@ RollBar::on_roller_editingFinished()
 			//XXX: Write this
 			break;
 		case RollInfo::SR_OPPOSED:
-			//XXX: Write this
+			if (result.opposed.hits < 0) {
+				res = tr("%1 net hits for the defender").arg(-result.opposed.hits);
+			} else if (result.opposed.hits > 0) {
+				res = tr("%1 net hits for the attacker").arg(result.opposed.hits);
+			} else {
+				res = tr("Tie");
+			}
+			switch (result.opposed.attacker_glitch) {
+			case NO_GLITCH:
+				// Nothing more to add.
+				break;
+			case GLITCH:
+				res += tr(", Attacker glitch");
+				break;
+			case CRITICAL_GLITCH:
+				res += tr(", Critical attacker glitch");
+				break;
+			}
+			switch (result.opposed.defender_glitch) {
+			case NO_GLITCH:
+				// Nothing more to add.
+				break;
+			case GLITCH:
+				res += tr(", Defender glitch");
+				break;
+			case CRITICAL_GLITCH:
+				res += tr(", Critical defender glitch");
+				break;
+			}
 			break;
 		}
 		results.prepend(res);
