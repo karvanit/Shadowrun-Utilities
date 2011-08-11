@@ -16,30 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef INITIATIVEACTIVITY_H
+#define INITIATIVEACTIVITY_H
 
-#include "combatactivity.h"
-#include "initiativeinput.h"
-#include "combatactor.h"
-#include "inputtable.h"
+#include <QtGui/QWidget>
+#include "ui_initiativeinput.h"
+class CombatActivity;
+class InputTable;
 
-inline InitiativeInput *CombatActivity::inputPage() const
-{
-	return static_cast<InitiativeInput*>(widget(0));
-}
+class InitiativeInput : public QWidget {
+	Q_OBJECT
 
-CombatActivity::CombatActivity(QWidget *parent)
-  : QStackedWidget(parent), actors()
-{
-	InputTable *it = new InputTable(actors, this);
-	it->setObjectName("inputData");
-	InitiativeInput *ii = new InitiativeInput(it);
-	ii->setObjectName("inputPage");
-	addWidget(ii);
-	QMetaObject::connectSlotsByName(this);
-}
+public:
+	InitiativeInput(InputTable *it, QWidget *parent = 0);
+	~InitiativeInput();
 
-CombatActivity::~CombatActivity()
-{
-}
+//NEEDED?	void tableChanged();
 
-// TODO: Use the information to run the combat.
+signals:
+	void switchPage();
+
+private slots:
+	void on_addActor_clicked();
+
+private:
+	Ui::InitiativeInputClass ui;
+};
+
+#endif // INITIATIVEACTIVITY_H

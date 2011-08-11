@@ -21,6 +21,11 @@
 #define COMBATACTIVITY_H_
 
 #include <QStackedWidget>
+#include <QList>
+class InitiativeInput;
+class QModelIndex;
+
+namespace Shadowrun { class CombatActor; }
 
 /** Handle initiative for Shadowrun combats.
  *  This class keeps track of the initiative score of actors in a combat and
@@ -31,6 +36,15 @@ class CombatActivity: public QStackedWidget {
 public:
 	CombatActivity(QWidget *parent = 0);
 	~CombatActivity();
+
+private:
+	InitiativeInput *inputPage() const;
+
+private slots:
+	void on_inputPage_switchPage();
+
+private:
+	QList<Shadowrun::CombatActor> actors;
 };
 
 #endif /* COMBATACTIVITY_H_ */

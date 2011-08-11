@@ -16,30 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include "combatactivity.h"
 #include "initiativeinput.h"
+#include "combatactivity.h"
 #include "combatactor.h"
 #include "inputtable.h"
+using namespace Shadowrun;
 
-inline InitiativeInput *CombatActivity::inputPage() const
+InitiativeInput::InitiativeInput(InputTable *it, QWidget *parent)
+  : QWidget(parent)
 {
-	return static_cast<InitiativeInput*>(widget(0));
+	ui.setupUi(this);
+	QItemSelectionModel *m = ui.actorsView->selectionModel();
+	ui.actorsView->setModel(it);
+	m->deleteLater();
+	ui.actorsView->setSelectionMode(QAbstractItemView::NoSelection);
+	connect(ui.runCombat, SIGNAL(clicked()), SIGNAL(switchPage()));
 }
 
-CombatActivity::CombatActivity(QWidget *parent)
-  : QStackedWidget(parent), actors()
-{
-	InputTable *it = new InputTable(actors, this);
-	it->setObjectName("inputData");
-	InitiativeInput *ii = new InitiativeInput(it);
-	ii->setObjectName("inputPage");
-	addWidget(ii);
-	QMetaObject::connectSlotsByName(this);
-}
-
-CombatActivity::~CombatActivity()
+InitiativeInput::~InitiativeInput()
 {
 }
 
-// TODO: Use the information to run the combat.
+void
+InitiativeInput::on_addActor_clicked()
+{
+	static_cast<InputTable*>(ui.actorsView->model())->addActor();
+}
+
+//TODO: Add a right-click menu which allows removing an actor. This must only work over actual actors.

@@ -4,19 +4,25 @@ else:TARGET = srutils
 QT += core \
     gui \
     xml
-HEADERS += dice.h \
+HEADERS += initiativeinput.h \
+    inputtable.h \
+    combatactor.h \
+    dice.h \
     combatactivity.h \
     mainview.h \
     rollinfo.h \
     rollbar.h \
     srutils.h
-SOURCES += combatactivity.cpp \
+SOURCES += initiativeinput.cpp \
+    inputtable.cpp \
+    combatactivity.cpp \
     mainview.cpp \
     shadowrun.cpp \
     rollbar.cpp \
     main.cpp \
     srutils.cpp
-FORMS += mainview.ui \
+FORMS += initiativeinput.ui \
+    mainview.ui \
     rollbar.ui \
     srutils.ui
 RESOURCES += 

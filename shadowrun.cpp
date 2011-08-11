@@ -17,6 +17,7 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dice.h"
+#include "combatactor.h"
 #include <cstdlib>
 #include <algorithm>
 
@@ -158,6 +159,54 @@ OpposedTestResult DicePool::opposedRoll(const DicePool & other) const
 	SimpleTestResult att = roll(0);
 	SimpleTestResult def = other.roll(0);
 	return OpposedTestResult::create(att.hits - def.hits, att.glitch, def.glitch);
+}
+
+/** Compare based on initiative.
+ *  Higher initiative goes first!
+ */
+bool
+CombatActor::operator <(const CombatActor & other) const
+{
+	int ret = other.init_score - init_score;
+	if (!ret) {
+		ret = other.edge - edge;
+	}
+	if (!ret) {
+		ret = other.initiative - initiative;
+	}
+	// ShadowrunRule: This is not strictly correct by the rules, we should finally compare Reaction attributes
+	return ret < 0;
+}
+
+/** Calculate the initiative score of an entity.
+ * ShadowrunRule: A character can spend Edge to gain an extra pass. lost_passes is set to -1 in this case.
+ * ShadowrunRule: A character with no initiative pool (due to wounds probably) gets no actions.
+ *                We set lost_passes to 6 in this case (higher than maximum passes).
+ */
+void
+CombatActor::calculateInitiativeScore(bool use_edge)
+{
+	if (initiative + wound_mod + (use_edge ? edge : 0) <= 0 && lost_passes > -1) {
+		lost_passes = 6;
+		init_score = 0; //And (don't) act last!
+	} else {
+		int init_pool = use_edge ? initiative + wound_mod + edge : initiative + wound_mod;
+		DicePool dp = DicePool(init_pool, use_edge ? DicePool::EDGE : DicePool::NORMAL);
+		SimpleTestResult res = dp.roll(0);
+		switch (res.glitch) {
+		case CRITICAL_GLITCH:
+			if (passes > 1) {
+				++lost_passes;
+			}
+			// Plus whatever the regular glitch does.
+		case GLITCH:
+			init_score = (initiative + wound_mod + res.hits) << 4;
+			break;
+		case NO_GLITCH:
+			init_score = ((initiative + wound_mod + res.hits) << 4) + 1;
+			break;
+		}
+	}
 }
 
 }	//Shadowrun namespace

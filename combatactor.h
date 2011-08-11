@@ -17,29 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "combatactivity.h"
-#include "initiativeinput.h"
-#include "combatactor.h"
-#include "inputtable.h"
+#ifndef COMBATACTOR_H_
+#define COMBATACTOR_H_
+#include <QString>
 
-inline InitiativeInput *CombatActivity::inputPage() const
-{
-	return static_cast<InitiativeInput*>(widget(0));
-}
+namespace Shadowrun {
 
-CombatActivity::CombatActivity(QWidget *parent)
-  : QStackedWidget(parent), actors()
-{
-	InputTable *it = new InputTable(actors, this);
-	it->setObjectName("inputData");
-	InitiativeInput *ii = new InitiativeInput(it);
-	ii->setObjectName("inputPage");
-	addWidget(ii);
-	QMetaObject::connectSlotsByName(this);
-}
+/** An entity that can take part in combat.
+ */
+struct CombatActor {
+	//Base values
+	QString name;
+	int edge;
+	//These can change while in combat
+	int initiative;
+	int passes;
+	int wound_mod;
+	//Combat values (these only have meaning during combat)
+	int init_score;
+	int lost_passes;
+	CombatActor(): name("Mr. Johnson"), edge(1), initiative(2), passes(1), wound_mod(0), init_score(0), lost_passes(0) {}
 
-CombatActivity::~CombatActivity()
-{
-}
+	/** Calculate new initiative value. */
+	void calculateInitiativeScore(bool use_edge = false);
+	/** Compare based on initiative. */
+	bool operator<(const CombatActor &other) const;
+};
 
-// TODO: Use the information to run the combat.
+}	//Shadowrun namespace
+
+#endif /* COMBATACTOR_H_ */
