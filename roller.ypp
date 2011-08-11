@@ -19,7 +19,7 @@
 %skeleton "lalr1.cc"
 %defines
 %code requires {
-#include "shadowrun.h"
+#include "dice.h"
 #include "rollinfo.h"
 using namespace Shadowrun;
 }

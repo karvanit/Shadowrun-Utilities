@@ -4,10 +4,10 @@ else:TARGET = srutils
 QT += core \
     gui \
     xml
-HEADERS += combatactivity.h \
+HEADERS += dice.h \
+    combatactivity.h \
     mainview.h \
     rollinfo.h \
-    shadowrun.h \
     rollbar.h \
     srutils.h
 SOURCES += combatactivity.cpp \

@@ -20,7 +20,7 @@
 
 #ifndef ROLLINFO_H_
 #define ROLLINFO_H_
-#include "shadowrun.h"
+#include "dice.h"
 class QString;
 
 namespace Roller {
