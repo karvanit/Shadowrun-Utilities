@@ -1,0 +1,124 @@
+/*
+ * Copyright © 2011 Konstantinos Arvanitis <konstantinos.arvanitis@gmail.com>
+ *
+ * This file is part of Shadowrun Utilities.
+ *
+ * Shadowrun Utilities program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+%skeleton "lalr1.cc"
+%defines
+%code requires {
+#include "shadowrun.h"
+#include "rollinfo.h"
+using namespace Shadowrun;
+}
+
+%union {
+	int num;
+	DicePool *pool;
+}
+%token END RUSHED OPPOSED LIMITED OPEN CLOSE INTERVAL INVALID
+%left EDGE
+%right LIMIT
+%token <num> NUMBER
+%left MINUS PLUS
+%type <pool> dice_pool ext_dice_pool
+%type <num> expr options opt_threshold
+
+%define namespace "Roller"
+%define parser_class_name "Parser"
+%parse-param { RollInfo &state }
+%{
+Roller::Parser::token_type rollerlex(Roller::Parser::semantic_type *yyval);
+#define yylex rollerlex
+%}
+%destructor { delete $$; } <pool>
+%%
+%start line;
+
+line:	END	{ YYABORT; }
+	| simple_roll END { YYACCEPT; }
+	| opposed_roll END { YYACCEPT; }
+	| extended_roll END { YYACCEPT; }
+	;
+
+simple_roll: dice_pool opt_threshold
+		{
+			state.roll = RollInfo::SR_SIMPLE;
+			state.simple = $1->roll($2);
+			delete $1;
+		}
+	;
+
+dice_pool: expr EDGE LIMIT NUMBER	{ $$ = new DicePool($1, DicePool::EDGE, $4); }
+	| expr LIMIT NUMBER		{ $$ = new DicePool($1, DicePool::NORMAL, $3); }
+	| expr EDGE			{ $$ = new DicePool($1, DicePool::EDGE); }
+	| expr				{ $$ = new DicePool($1); }
+	;
+
+expr: NUMBER			/* $$ = $1 is the default action. */
+	| expr PLUS NUMBER	{ $$ = $1 + $3; }
+	| expr MINUS NUMBER	{ $$ = $1 - $3; }
+	;
+
+opt_threshold: OPEN expr CLOSE	{ $$ = $2; }
+	|			{ $$ = 1; }
+	;
+
+opposed_roll: dice_pool OPPOSED dice_pool
+		{
+			state.roll = RollInfo::SR_OPPOSED;
+			state.opposed = $1->opposedRoll(*$3);
+			delete $1;
+			delete $3;
+		}
+	;
+
+options: LIMITED		{ $$ = 1; }
+	| RUSHED		{ $$ = 2; }
+	| LIMITED RUSHED	{ $$ = 3; }
+	| RUSHED LIMITED	{ $$ = 3; }
+	;
+
+extended_roll: options ext_dice_pool OPEN expr INTERVAL NUMBER CLOSE
+		{
+			state.roll = RollInfo::SR_EXTENDED;
+			state.extended = $2->extendedRoll($4, $1 & 1);
+			delete $2;
+		}
+	|	dice_pool OPEN expr INTERVAL NUMBER CLOSE
+		{
+			state.roll = RollInfo::SR_EXTENDED;
+			state.extended = $1->extendedRoll($3);
+			delete $1;
+		}
+	;
+
+/* We can use $0 because we KNOW that 'ext_dice_pool' is only used in the
+   above rule for 'extended_roll', so the previous grouping/token is 'options'.
+ */
+ext_dice_pool: expr EDGE LIMIT NUMBER	{ $$ = new DicePool($1, $<num>0 & 2 ? DicePool::RUSHED_EDGE : DicePool::EDGE, $4); }
+	| expr LIMIT NUMBER		{ $$ = new DicePool($1, $<num>0 & 2 ? DicePool::RUSHED : DicePool::NORMAL, $3); }
+	| expr EDGE			{ $$ = new DicePool($1, $<num>0 & 2 ? DicePool::RUSHED_EDGE : DicePool::EDGE); }
+	| expr				{ $$ = new DicePool($1, $<num>0 & 2 ? DicePool::RUSHED : DicePool::NORMAL); }
+	;
+
+%%
+
+void
+Roller::Parser::error(Roller::location const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const &)
+{
+	/* Do nothing, ignore it. */
+}
+
