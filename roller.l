@@ -30,7 +30,7 @@ WS	[ \t\n]+
 	typedef Roller::Parser::token token;
 %}
 {WS}	/* Skip blanks and tabs */
-{NUM}	{
+{NUM}|0	{
 		yylval->num = atoi(yytext);
 		return token::NUMBER;
 	}
