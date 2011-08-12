@@ -20,9 +20,11 @@
 #include "combatactor.h"
 #include "inputtable.h"
 
-CombatTable::CombatTable(QObject *parent)
+CombatTable::CombatTable(InputTable *it, QObject *parent)
   : QSortFilterProxyModel(parent)
 {
+	setSourceModel(it);
+	connect(it, SIGNAL(dataChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(sourceDataChanged(const QModelIndex&,const QModelIndex&)));
 }
 
 CombatTable::~CombatTable()
@@ -125,6 +127,12 @@ CombatTable::at(int row) const
 	return srcmodel->at(mapToSource(index(row, 0)).row());
 }
 
-// TODO: Recalculate the initiative score when CF_Initiative or CF_Wounded changes.
-// TODO: Recalculate Initiative Score (and resort) for an actor that has Wound Modifier changed.
+void
+CombatTable::sourceDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight)
+{
+	if (topLeft.row() == bottomRight.row() && topLeft.column() == InputTable::CF_Wounded) {
+		sort(Qt::AscendingOrder);
+	}
+}
+// TODO: Recalculate the initiative score when CF_Initiative changes.
 // TODO: Recalculate Initiative Score (and resort) for an actor that has Initiative changed.

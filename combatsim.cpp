@@ -28,8 +28,7 @@ CombatSim::CombatSim(InputTable *it, QWidget *parent)
   : QWidget(parent)
 {
 	ui.setupUi(this);
-	CombatTable *ct = new CombatTable(this);
-	ct->setSourceModel(it);
+	CombatTable *ct = new CombatTable(it, this);
 	QItemSelectionModel *m = ui.actorsView->selectionModel();
 	ui.actorsView->setModel(ct);
 	m->deleteLater();

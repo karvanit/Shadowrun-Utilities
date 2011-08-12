@@ -19,6 +19,7 @@
 #ifndef COMBATTABLE_H_
 #define COMBATTABLE_H_
 #include <QSortFilterProxyModel>
+class InputTable;
 
 namespace Shadowrun { class CombatActor; }
 
@@ -27,7 +28,7 @@ namespace Shadowrun { class CombatActor; }
 class CombatTable: public QSortFilterProxyModel {
 	Q_OBJECT
 public:
-	CombatTable(QObject *parent = 0);
+	CombatTable(InputTable *it, QObject *parent = 0);
 	~CombatTable();
 
 	bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
@@ -49,6 +50,10 @@ public slots:
 	 *  Advance to next round if all actors have no more passes.
 	 */
 	void nextPass();
+
+private slots:
+	/** Detect changes to data that effect initiative score. */
+	void sourceDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight);
 
 signals:
 	/** A new combat turn has started.
