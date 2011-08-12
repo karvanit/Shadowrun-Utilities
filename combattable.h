@@ -19,6 +19,9 @@
 #ifndef COMBATTABLE_H_
 #define COMBATTABLE_H_
 #include <QSortFilterProxyModel>
+
+namespace Shadowrun { class CombatActor; }
+
 /** Handle our list of Combat actors during a combat.
  */
 class CombatTable: public QSortFilterProxyModel {
@@ -31,6 +34,12 @@ public:
 	Qt::ItemFlags flags(const QModelIndex & index ) const;
 
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
+	/** Read-only access to an actor in the combat.
+	 * @param row The row with the actor.
+	 * @return Read-only access reference to the actor.
+	 */
+	const Shadowrun::CombatActor &at(int row) const;
 
 	/** Remove an actor based on the row. */
 	void removeActor(int row);

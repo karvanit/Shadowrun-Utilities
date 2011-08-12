@@ -57,9 +57,8 @@ CombatTable::flags(const QModelIndex & index ) const
 void
 CombatTable::removeActor(int row)
 {
-	QModelIndex src = mapToSource(index(row, 0));
 	InputTable *srcmodel = static_cast<InputTable*>(sourceModel());
-	srcmodel->removeActor(src.row());
+	srcmodel->removeActor(mapToSource(index(row, 0)).row());
 }
 
 /** Display the initiative score and status as a row label.
@@ -117,6 +116,13 @@ CombatTable::startNextTurn()
 	current_pass = 1;
 	emit headerDataChanged(Qt::Vertical, 0, rowCount() - 1);
 	emit nextTurn();
+}
+
+const Shadowrun::CombatActor &
+CombatTable::at(int row) const
+{
+	InputTable *srcmodel = static_cast<InputTable*>(sourceModel());
+	return srcmodel->at(mapToSource(index(row, 0)).row());
 }
 
 // TODO: Recalculate the initiative score when CF_Initiative or CF_Wounded changes.

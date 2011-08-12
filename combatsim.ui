@@ -23,6 +23,9 @@
    </item>
    <item>
     <widget class="QTableView" name="actorsView">
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
      <property name="dragDropOverwriteMode">
       <bool>false</bool>
      </property>
@@ -81,6 +84,51 @@
     </layout>
    </item>
   </layout>
+  <action name="actionRemoveActor">
+   <property name="text">
+    <string>Remove Actor</string>
+   </property>
+  </action>
+  <action name="actionPlayFirst">
+   <property name="text">
+    <string>Play first</string>
+   </property>
+   <property name="toolTip">
+    <string>Spend an Edge point to play first.</string>
+   </property>
+  </action>
+  <action name="actionRollEdge">
+   <property name="text">
+    <string>Roll with Edge</string>
+   </property>
+   <property name="toolTip">
+    <string>Roll Initiative adding Edge dice.</string>
+   </property>
+  </action>
+  <action name="actionAddEdge">
+   <property name="text">
+    <string>Add Edge dice</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Edge dice to rolled Initiative.</string>
+   </property>
+  </action>
+  <action name="actionAddPass">
+   <property name="text">
+    <string>Add Pass</string>
+   </property>
+   <property name="toolTip">
+    <string>Spend Edge to gain an extra pass during this turn.</string>
+   </property>
+  </action>
+  <action name="actionFullDefense">
+   <property name="text">
+    <string>Full Defense</string>
+   </property>
+   <property name="toolTip">
+    <string>Go to full defense, forfeiting next action.</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

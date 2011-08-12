@@ -20,6 +20,7 @@
 #include "combatactor.h"
 #include "inputtable.h"
 #include "combattable.h"
+#include <QMenu>
 
 using namespace Shadowrun;
 
@@ -34,6 +35,13 @@ CombatSim::CombatSim(InputTable *it, QWidget *parent)
 	m->deleteLater();
 	connect(ui.switchToInput, SIGNAL(clicked()), SIGNAL(switchPage()));
 	connect(ui.nextPass, SIGNAL(clicked()), ct, SLOT(nextPass()));
+	available_actions = new QMenu(this);
+	available_actions->addAction(ui.actionRemoveActor);
+	available_actions->addSeparator();
+	available_actions->addAction(ui.actionPlayFirst);
+	available_actions->addAction(ui.actionRollEdge);
+	available_actions->addAction(ui.actionAddEdge);
+	available_actions->addAction(ui.actionAddPass);
 }
 
 CombatSim::~CombatSim()
@@ -41,9 +49,59 @@ CombatSim::~CombatSim()
 
 }
 
-// TODO: Context action - Use Edge on initiative: Reroll initiative, using edge dice. Resort
-// TODO: Context action - Add Edge on initiative: Change initiative score by adding Edge dice results. Resort
-// TODO: Context action - Add action: Add another pass on the actor.
-// TODO: Context action - Play First: Move this actor to play first. Resort
-// TODO: Context action - Remove from combat: Remove this actor from the list.
+void
+CombatSim::on_actorsView_customContextMenuRequested(const QPoint &pos)
+{
+	actor_for_action = ui.actorsView->indexAt(pos);
+	if (actor_for_action.isValid()) {
+		//TODO: Enable / Disable available actions
+		available_actions->exec(ui.actorsView->mapToGlobal(pos));
+	}
+}
+
+/** Remove the selected actor from the combat.
+ */
+void
+CombatSim::on_actionRemoveActor_triggered()
+{
+	CombatTable *ct = static_cast<CombatTable*>(ui.actorsView->model());
+	ct->removeActor(actor_for_action.row());
+}
+
+/** Have the actor take a full defense action.
+ *  ShadowrunRule: Full defense actions can be taken out of turn, and they use up the next available action for the character.
+ *                 They can also use up the first action of the next round, if required.
+ */
+void
+CombatSim::on_actionFullDefense_triggered()
+{
+	//TODO: Implement Full Defense
+}
+
+/** Play first, regardless of initiative.
+ *  ShadowrunRule: An entity can spend a point of Edge (not tracked in our program)
+ *                 and act first, playing before everyone who did not spend an Edge point to play first.
+ */
+void
+CombatSim::on_actionPlayFirst_triggered()
+{
+	//TODO: Implement Play First
+}
+
+/** Roll initiative again, using Edge dice as well.
+ */
+void
+CombatSim::on_actionRollEdge_triggered()
+{
+	//TODO: Implement initiative with Edge.
+}
+
+/** Add the results of Edge rolling into the Initiative Score.
+ */
+void
+CombatSim::on_actionAddEdge_triggered()
+{
+	//TODO: Implement add Edge to initiative.
+}
+
 // TODO: Add Surprise Round

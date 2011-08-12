@@ -18,8 +18,7 @@
  */
 #ifndef COMBATSIM_H
 #define COMBATSIM_H
-#include <QSortFilterProxyModel>
-#include <QList>
+#include <QModelIndex>
 #include <QtGui/QWidget>
 #include "ui_combatsim.h"
 
@@ -36,8 +35,18 @@ public:
 signals:
 	void switchPage();
 
+private slots:
+	void on_actorsView_customContextMenuRequested(const QPoint &pos);
+	void on_actionRemoveActor_triggered();
+	void on_actionFullDefense_triggered();
+	void on_actionPlayFirst_triggered();
+	void on_actionRollEdge_triggered();
+	void on_actionAddEdge_triggered();
+
 private:
 	Ui::CombatSimClass ui;
+	QMenu *available_actions;
+	QModelIndex actor_for_action;
 };
 
 #endif // COMBATSIM_H
