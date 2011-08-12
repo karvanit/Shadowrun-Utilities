@@ -98,9 +98,7 @@ InputTable::setData(const QModelIndex & index, const QVariant & value, int role)
 		actor.edge = value.toInt();
 		break;
 	case CF_Wounded:
-		actor.init_score -= actor.wound_mod << 4;
 		actor.wound_mod = value.toInt();
-		actor.init_score += actor.wound_mod << 4;
 		break;
 	default:
 		return false;

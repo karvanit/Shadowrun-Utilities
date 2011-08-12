@@ -75,7 +75,7 @@ CombatTable::headerData(int section, Qt::Orientation orientation, int role) cons
 	QModelIndex src = mapToSource(index(section, 0));
 	InputTable *it = static_cast<InputTable*>(sourceModel());
 	if (it->at(src.row()).passes >= current_pass)
-		return QVariant(QString("(") + QString::number(it->at(src.row()).init_score >> 4) + QString(")"));
+		return QVariant(QString("(") + QString::number(it->at(src.row()).initiativeScore()) + QString(")"));
 	return QVariant("--");
 }
 

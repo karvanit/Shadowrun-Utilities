@@ -35,15 +35,19 @@ struct CombatActor {
 	int passes;
 	int wound_mod;
 	//Combat values (these only have meaning during combat)
-	int init_score;
+	int init_hits;	//!< Number of hits on the initiative test.
 
-	CombatActor(): name("Mr. Johnson"), edge(1), initiative(2), passes(1), wound_mod(0), init_score(0) {}
+	CombatActor(): name("Mr. Johnson"), edge(1), initiative(2), passes(1), wound_mod(0), init_hits(-1), glitched(false) {}
 
 	/** Calculate new initiative value. */
 	void calculateInitiativeScore(bool use_edge = false);
 
 	/** Compare based on initiative. */
-	bool operator<(const CombatActor &other) const;
+	bool operator<(CombatActor &other);
+
+	int initiativeScore();
+private:
+	bool glitched;
 };
 
 }	//Shadowrun namespace

@@ -165,10 +165,14 @@ OpposedTestResult DicePool::opposedRoll(const DicePool & other) const
  *  Higher initiative goes first!
  */
 bool
-CombatActor::operator <(const CombatActor & other) const
+CombatActor::operator <(CombatActor & other)
 {
-	int ret = other.init_score - init_score;
+	int ret = other.initiativeScore() - initiativeScore();
 	if (!ret) {
+		if (other.glitched && !glitched)
+			return true;
+		if (!other.glitched && glitched)
+			return false;
 		ret = other.edge - edge;
 	}
 	if (!ret) {
@@ -186,7 +190,7 @@ CombatActor::calculateInitiativeScore(bool use_edge)
 {
 	if (initiative + wound_mod + (use_edge ? edge : 0) <= 0) {
 		//TODO: Implement ShadowrunRule: This actor should lose all actions for this turn.
-		init_score = 0; //And (don't) act last!
+		init_hits = 0;
 	} else {
 		int init_pool = initiative + wound_mod + use_edge ? edge : 0;
 		DicePool dp = DicePool(init_pool, use_edge ? DicePool::EDGE : DicePool::NORMAL);
@@ -196,14 +200,24 @@ CombatActor::calculateInitiativeScore(bool use_edge)
 			//TODO: ShadowrunRule: This actor should lose an action, if it has more than one pass.
 			// Plus whatever the regular glitch does.
 		case GLITCH:
-			init_score = (initiative + wound_mod + res.hits) << 4;
+			glitched = true;
+			init_hits = res.hits;
 			break;
 		case NO_GLITCH:
-			init_score = ((initiative + wound_mod + res.hits) << 4) + 1;
+			glitched = false;
+			init_hits = res.hits;
 			break;
 		}
 	}
 }
 
+int
+CombatActor::initiativeScore()
+{
+	if (init_hits == -1) {
+		calculateInitiativeScore();
+	}
+	return initiative + wound_mod + init_hits;
+}
 //TODO Implement ShadowrunRule: A character can spend Edge to gain an extra pass.
 }	//Shadowrun namespace
