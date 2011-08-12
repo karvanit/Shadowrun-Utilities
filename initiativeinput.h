@@ -31,15 +31,17 @@ public:
 	InitiativeInput(InputTable *it, QWidget *parent = 0);
 	~InitiativeInput();
 
-//NEEDED?	void tableChanged();
-
 signals:
 	void switchPage();
 
 private slots:
 	void on_addActor_clicked();
+	void on_actorsView_customContextMenuRequested(const QPoint &pos);
+	void on_removeActor_triggered();
 
 private:
+	int current_actor;	//!< Used by the context menu.
+	QMenu *actor_menu;	//!< The context menu on actors.
 	Ui::InitiativeInputClass ui;
 };
 
