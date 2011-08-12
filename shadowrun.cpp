@@ -179,25 +179,21 @@ CombatActor::operator <(const CombatActor & other) const
 }
 
 /** Calculate the initiative score of an entity.
- * ShadowrunRule: A character can spend Edge to gain an extra pass. lost_passes is set to -1 in this case.
  * ShadowrunRule: A character with no initiative pool (due to wounds probably) gets no actions.
- *                We set lost_passes to 6 in this case (higher than maximum passes).
  */
 void
 CombatActor::calculateInitiativeScore(bool use_edge)
 {
-	if (initiative + wound_mod + (use_edge ? edge : 0) <= 0 && lost_passes > -1) {
-		lost_passes = 6;
+	if (initiative + wound_mod + (use_edge ? edge : 0) <= 0) {
+		//TODO: Implement ShadowrunRule: This actor should lose all actions for this turn.
 		init_score = 0; //And (don't) act last!
 	} else {
-		int init_pool = use_edge ? initiative + wound_mod + edge : initiative + wound_mod;
+		int init_pool = initiative + wound_mod + use_edge ? edge : 0;
 		DicePool dp = DicePool(init_pool, use_edge ? DicePool::EDGE : DicePool::NORMAL);
 		SimpleTestResult res = dp.roll(0);
 		switch (res.glitch) {
 		case CRITICAL_GLITCH:
-			if (passes > 1) {
-				++lost_passes;
-			}
+			//TODO: ShadowrunRule: This actor should lose an action, if it has more than one pass.
 			// Plus whatever the regular glitch does.
 		case GLITCH:
 			init_score = (initiative + wound_mod + res.hits) << 4;
@@ -209,4 +205,5 @@ CombatActor::calculateInitiativeScore(bool use_edge)
 	}
 }
 
+//TODO Implement ShadowrunRule: A character can spend Edge to gain an extra pass.
 }	//Shadowrun namespace

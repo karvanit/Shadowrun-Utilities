@@ -4,7 +4,9 @@ else:TARGET = srutils
 QT += core \
     gui \
     xml
-HEADERS += initiativeinput.h \
+HEADERS += combatsim.h \
+    combattable.h \
+    initiativeinput.h \
     inputtable.h \
     combatactor.h \
     dice.h \
@@ -13,7 +15,9 @@ HEADERS += initiativeinput.h \
     rollinfo.h \
     rollbar.h \
     srutils.h
-SOURCES += initiativeinput.cpp \
+SOURCES += combatsim.cpp \
+    combattable.cpp \
+    initiativeinput.cpp \
     inputtable.cpp \
     combatactivity.cpp \
     mainview.cpp \
@@ -21,7 +25,8 @@ SOURCES += initiativeinput.cpp \
     rollbar.cpp \
     main.cpp \
     srutils.cpp
-FORMS += initiativeinput.ui \
+FORMS += combatsim.ui \
+    initiativeinput.ui \
     mainview.ui \
     rollbar.ui \
     srutils.ui

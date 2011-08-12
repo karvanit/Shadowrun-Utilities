@@ -43,7 +43,18 @@ public:
 	//Allow us to add / remove actors
 	void addActor();
 	void removeActor(int row);
-//NEEDED?	void notifyChanges() { emit dataChanged(index(0,0), index(rowCount() - 1, columnCount() - 1)); emit layoutAboutToBeChanged(); emit layoutChanged(); }
+
+	/** Allow direct read-only access.
+	 *  @param idx The actor index in our list.
+	 *  @return A direct read-only reference to the proper actor.
+	 */
+	const Shadowrun::CombatActor &at(int idx) const { return actors.at(idx); }
+	/** Allow direct write access.
+	 *  Only use this for the extra fields, not the fields that are exported throught the model.
+	 *  @param idx The actor index in our list.
+	 *  @return A direct reference to the proper actor.
+	 */
+	Shadowrun::CombatActor &at(int idx) { return actors[idx]; }
 
 private:
 	QList<Shadowrun::CombatActor> &actors;

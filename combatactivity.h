@@ -23,7 +23,7 @@
 #include <QStackedWidget>
 #include <QList>
 class InitiativeInput;
-class QModelIndex;
+class CombatSim;
 
 namespace Shadowrun { class CombatActor; }
 
@@ -33,15 +33,19 @@ namespace Shadowrun { class CombatActor; }
  *  in combat order.
  */
 class CombatActivity: public QStackedWidget {
+	Q_OBJECT
+
 public:
 	CombatActivity(QWidget *parent = 0);
 	~CombatActivity();
 
 private:
 	InitiativeInput *inputPage() const;
+	CombatSim *combatPage() const;
 
 private slots:
 	void on_inputPage_switchPage();
+	void on_combatPage_switchPage();
 
 private:
 	QList<Shadowrun::CombatActor> actors;

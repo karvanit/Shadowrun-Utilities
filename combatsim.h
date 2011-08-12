@@ -16,36 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef COMBATSIM_H
+#define COMBATSIM_H
+#include <QSortFilterProxyModel>
+#include <QList>
+#include <QtGui/QWidget>
+#include "ui_combatsim.h"
 
-#ifndef COMBATACTOR_H_
-#define COMBATACTOR_H_
-#include <QString>
-#include <bitset>
+class InputTable;
+namespace Shadowrun { class CombatActor; }
 
-namespace Shadowrun {
+class CombatSim : public QWidget {
+	Q_OBJECT
 
-/** An entity that can take part in combat.
- */
-struct CombatActor {
-	//Base values
-	QString name;
-	int edge;
-	//These can change while in combat
-	int initiative;
-	int passes;
-	int wound_mod;
-	//Combat values (these only have meaning during combat)
-	int init_score;
+public:
+	CombatSim(InputTable *at, QWidget *parent = 0);
+	~CombatSim();
 
-	CombatActor(): name("Mr. Johnson"), edge(1), initiative(2), passes(1), wound_mod(0), init_score(0) {}
+signals:
+	void switchPage();
 
-	/** Calculate new initiative value. */
-	void calculateInitiativeScore(bool use_edge = false);
-
-	/** Compare based on initiative. */
-	bool operator<(const CombatActor &other) const;
+private:
+	Ui::CombatSimClass ui;
 };
 
-}	//Shadowrun namespace
-
-#endif /* COMBATACTOR_H_ */
+#endif // COMBATSIM_H

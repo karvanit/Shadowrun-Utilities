@@ -21,10 +21,16 @@
 #include "initiativeinput.h"
 #include "combatactor.h"
 #include "inputtable.h"
+#include "combatsim.h"
 
 inline InitiativeInput *CombatActivity::inputPage() const
 {
 	return static_cast<InitiativeInput*>(widget(0));
+}
+
+inline CombatSim *CombatActivity::combatPage() const
+{
+	return static_cast<CombatSim*>(widget(1));
 }
 
 CombatActivity::CombatActivity(QWidget *parent)
@@ -35,11 +41,30 @@ CombatActivity::CombatActivity(QWidget *parent)
 	InitiativeInput *ii = new InitiativeInput(it);
 	ii->setObjectName("inputPage");
 	addWidget(ii);
+	CombatSim *cs = new CombatSim(it, this);
+	cs->setObjectName("combatPage");
+	addWidget(cs);
 	QMetaObject::connectSlotsByName(this);
 }
 
 CombatActivity::~CombatActivity()
 {
+}
+
+/** Switch to the combat page.
+ */
+void
+CombatActivity::on_inputPage_switchPage()
+{
+	setCurrentIndex(1);
+}
+
+/** Switch to the input page.
+ */
+void
+CombatActivity::on_combatPage_switchPage()
+{
+	setCurrentIndex(0);
 }
 
 // TODO: Use the information to run the combat.
