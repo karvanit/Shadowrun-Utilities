@@ -24,7 +24,6 @@ MainView::MainView(QWidget *parent)
   : QWidget(parent)
 {
 	ui.setupUi(this);
-	setActivity(new QLabel(tr("Choose an activity from the menu.")));
 }
 
 MainView::~MainView()
@@ -35,13 +34,29 @@ MainView::~MainView()
 /** Set our activity to the provided widget.
  *  We now have ownership of \a activity.
  *  @param activity A pointer to a widget that represents an activity.
+ *  @param actName The activity name for the tab.
  */
 void
-MainView::setActivity(QWidget *activity)
+MainView::addActivity(QWidget *activity, const QString &actName)
 {
-	activity->setParent(this);
-	ui.verticalLayout->removeWidget(ui.activity);
-	ui.verticalLayout->addWidget(activity);
-	ui.activity->deleteLater();
-	ui.activity = activity;
+	ui.activity->setUpdatesEnabled(false);
+	int ntab = ui.activity->addTab(activity, actName);
+	ui.activity->setCurrentIndex(ntab);
+	ui.activity->setUpdatesEnabled(true);
+}
+
+/** Close tab as requested, keeping roller.
+ *  We close any tab, except the very first one, which is the roller.
+ *  @param idx The tab index.
+ */
+void
+MainView::on_activity_tabCloseRequested(int idx)
+{
+	if (idx != 0) {
+		ui.activity->setUpdatesEnabled(false);
+		QWidget *activity = ui.activity->widget(idx);
+		ui.activity->removeTab(idx);
+		activity->deleteLater();
+		ui.activity->setUpdatesEnabled(true);
+	}
 }

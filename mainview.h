@@ -29,7 +29,10 @@ public:
 	MainView(QWidget *parent = 0);
 	~MainView();
 
-	void setActivity(QWidget *activity);
+	void addActivity(QWidget *activity, const QString &actName);
+
+private slots:
+	void on_activity_tabCloseRequested(int);
 
 private:
 	Ui::MainViewClass ui;

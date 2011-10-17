@@ -33,5 +33,5 @@ SRUtils::~SRUtils()
 
 void SRUtils::on_action_Combat_triggered()
 {
-	ui.centralwidget->setActivity(new CombatActivity);
+	ui.centralwidget->addActivity(new CombatActivity, tr("Combat"));
 }
