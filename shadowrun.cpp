@@ -20,6 +20,7 @@
 #include "combatactor.h"
 #include <cstdlib>
 #include <algorithm>
+#include <assert.h>
 
 using namespace Shadowrun;
 namespace {
@@ -73,6 +74,8 @@ DieFace roll(DicePool::DieType type = DicePool::NORMAL)
 	case DicePool::RUSHED_EDGE:
 		sides = rushed_edge_sides;
 		break;
+	default:
+		assert(0 && "Unreachable code reached!");
 	}
 	return sides[static_cast<int>(random() / (RAND_MAX + 1.0) * 6)];
 }
