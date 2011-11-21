@@ -22,6 +22,9 @@
 #include "combatactor.h"
 #include "inputtable.h"
 #include "combatsim.h"
+#include <QFileDialog>
+#include <QFile>
+#include <QDataStream>
 
 inline InitiativeInput *CombatActivity::inputPage() const
 {
@@ -34,7 +37,7 @@ inline CombatSim *CombatActivity::combatPage() const
 }
 
 CombatActivity::CombatActivity(QWidget *parent)
-  : QStackedWidget(parent), actors()
+  : QStackedWidget(parent), actors(), input_table(0)
 {
 	InputTable *it = new InputTable(actors, this);
 	it->setObjectName("inputData");
@@ -44,6 +47,7 @@ CombatActivity::CombatActivity(QWidget *parent)
 	CombatSim *cs = new CombatSim(it, this);
 	cs->setObjectName("combatPage");
 	addWidget(cs);
+	input_table.reset(it);
 	QMetaObject::connectSlotsByName(this);
 }
 
@@ -65,6 +69,72 @@ void
 CombatActivity::on_combatPage_switchPage()
 {
 	setCurrentIndex(0);
+}
+
+/** Save all actors to a file.
+ */
+void
+CombatActivity::on_saveActors_clicked()
+{
+	QString fname = QFileDialog::getSaveFileName(this, tr("Save actors"),
+						     QString(), tr("Combat files (*.combat)"));
+	if (fname.isEmpty())
+		return;
+	QFile fout(fname);
+	fout.open(QIODevice::WriteOnly);
+	QDataStream out(&fout);
+	for (QList<Shadowrun::CombatActor>::const_iterator ii = actors.begin(); ii != actors.end(); ++ii) {
+		out << *ii;
+	}
+	fout.close();
+}
+
+/** Load all actors from a file.
+ */
+void
+CombatActivity::on_loadActors_clicked()
+{
+	QString fname = QFileDialog::getOpenFileName(this, tr("Save actors"),
+						     QString(), tr("Combat files (*.combat)"));
+	if (fname.isEmpty())
+		return;
+	actors.clear();
+	QFile fin(fname);
+	fin.open(QIODevice::ReadOnly);
+	QDataStream in(&fin);
+	Shadowrun::CombatActor buf;
+	while (!in.atEnd()) {
+		in >> buf;
+		actors.push_back(buf);
+	}
+	fin.close();
+	InputTable *it = new InputTable(actors, this);
+	it->setObjectName("inputData");
+	inputPage()->setTable(it);
+	combatPage()->setTable(it);
+	input_table.reset(it);
+}
+
+QDataStream &
+Shadowrun::operator<<(QDataStream &os, const Shadowrun::CombatActor &actor)
+{
+	os << actor.name;
+	os << actor.edge;
+	os << actor.initiative;
+	os << actor.passes;
+	os << actor.wound_mod;
+	return os;
+}
+
+QDataStream &
+Shadowrun::operator>>(QDataStream &is, Shadowrun::CombatActor &actor)
+{
+	is >> actor.name;
+	is >> actor.edge;
+	is >> actor.initiative;
+	is >> actor.passes;
+	is >> actor.wound_mod;
+	return is;
 }
 
 // TODO: Use the information to run the combat.

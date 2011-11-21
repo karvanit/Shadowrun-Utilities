@@ -22,6 +22,8 @@
 #include <QString>
 #include <bitset>
 
+class QDataStream;
+
 namespace Shadowrun {
 
 /** An entity that can take part in combat.
@@ -44,12 +46,13 @@ struct CombatActor {
 
 	/** Compare based on initiative. */
 	bool operator<(CombatActor &other);
-
 	int initiativeScore();
 private:
 	bool glitched;
 };
 
+QDataStream &operator<<(QDataStream &, const CombatActor &);
+QDataStream &operator>>(QDataStream &, CombatActor &);
 }	//Shadowrun namespace
 
 #endif /* COMBATACTOR_H_ */

@@ -42,6 +42,17 @@ InitiativeInput::~InitiativeInput()
 {
 }
 
+/** Change the data table.
+ */
+void
+InitiativeInput::setTable(InputTable *it)
+{
+	QItemSelectionModel *m = ui.actorsView->selectionModel();
+	ui.actorsView->setModel(it);
+	m->deleteLater();
+	ui.actorsView->setSelectionMode(QAbstractItemView::NoSelection);
+}
+
 /** Add an actor at the end of our list.
  */
 void

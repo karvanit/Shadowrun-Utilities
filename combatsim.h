@@ -32,6 +32,8 @@ public:
 	CombatSim(InputTable *at, QWidget *parent = 0);
 	~CombatSim();
 
+	void setTable(InputTable *it);
+
 signals:
 	void switchPage();
 

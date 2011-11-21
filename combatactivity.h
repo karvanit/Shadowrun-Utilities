@@ -24,6 +24,7 @@
 #include <QList>
 class InitiativeInput;
 class CombatSim;
+class InputTable;
 
 namespace Shadowrun { class CombatActor; }
 
@@ -46,9 +47,12 @@ private:
 private slots:
 	void on_inputPage_switchPage();
 	void on_combatPage_switchPage();
+	void on_saveActors_clicked();
+	void on_loadActors_clicked();
 
 private:
 	QList<Shadowrun::CombatActor> actors;
+	QScopedPointer<InputTable> input_table;
 };
 
 #endif /* COMBATACTIVITY_H_ */

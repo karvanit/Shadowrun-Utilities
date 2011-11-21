@@ -48,6 +48,16 @@ CombatSim::~CombatSim()
 
 }
 
+/** Change the data table.
+ */
+void
+CombatSim::setTable(InputTable *it)
+{
+	QItemSelectionModel *m = ui.actorsView->selectionModel();
+	ui.actorsView->setModel(it);
+	m->deleteLater();
+}
+
 void
 CombatSim::on_actorsView_customContextMenuRequested(const QPoint &pos)
 {

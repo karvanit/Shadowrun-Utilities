@@ -31,6 +31,8 @@ public:
 	InitiativeInput(InputTable *it, QWidget *parent = 0);
 	~InitiativeInput();
 
+	void setTable(InputTable *it);
+
 signals:
 	void switchPage();
 
