@@ -54,7 +54,9 @@ void
 CombatSim::setTable(InputTable *it)
 {
 	QItemSelectionModel *m = ui.actorsView->selectionModel();
-	ui.actorsView->setModel(it);
+	CombatTable *ct = new CombatTable(it, this);
+	connect(ui.nextPass, SIGNAL(clicked()), ct, SLOT(nextPass()));
+	ui.actorsView->setModel(ct);
 	m->deleteLater();
 }
 

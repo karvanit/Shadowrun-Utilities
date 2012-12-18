@@ -113,6 +113,7 @@ CombatActivity::on_loadActors_clicked()
 	inputPage()->setTable(it);
 	combatPage()->setTable(it);
 	input_table.reset(it);
+	QMetaObject::connectSlotsByName(this);
 }
 
 QDataStream &
